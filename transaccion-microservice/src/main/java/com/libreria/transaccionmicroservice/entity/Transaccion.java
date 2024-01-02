@@ -21,7 +21,6 @@ public class Transaccion {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date fechaCompra;
-
     private int idCliente;
     private int idLibro;
     private int cantidadLibro;

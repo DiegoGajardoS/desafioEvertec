@@ -1,6 +1,7 @@
 package com.libreria.transaccionmicroservice.controller;
 
 
+import com.libreria.transaccionmicroservice.dto.CompraRequestDTO;
 import com.libreria.transaccionmicroservice.entity.Transaccion;
 import com.libreria.transaccionmicroservice.service.TransaccionService;
 import com.libreria.transaccionmicroservice.repository.TransaccionRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -39,5 +41,12 @@ public class TransaccionController {
 
         Transaccion transaccionNuevo = transaccionService.save(transaccion);
         return ResponseEntity.ok(transaccionNuevo);
+    }
+
+    @PostMapping("/realizar")
+    public ResponseEntity<String> realizarCompra(@RequestBody CompraRequestDTO compraRequestDTO) {
+        compraRequestDTO.setTimestamp(LocalDateTime.now());
+        transaccionService.RealizarTransaccion(compraRequestDTO);
+        return ResponseEntity.ok("Compra realizada con éxito");
     }
 }
