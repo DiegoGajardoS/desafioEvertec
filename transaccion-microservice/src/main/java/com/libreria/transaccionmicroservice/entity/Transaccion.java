@@ -21,9 +21,28 @@ public class Transaccion {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date fechaCompra;
-    private int idCliente;
-    private int idLibro;
+    private Long idCliente;
+    private Long idLibro;
     private int cantidadLibro;
-    private int idCompra;
+    private Long idCompra;
 
+    public Long getIdCompra(){
+        return idCompra;
+    }
+
+    public void setFechaCompra( Date fechaCompra){
+        this.fechaCompra = fechaCompra;
+    }
+    public void setIdCliente (Long idCliente){
+        this.idCliente = idCliente;
+    }
+    public void setIdLibro (Long idLibro){
+        this.idLibro = idLibro;
+    }
+    public void setCantidadLibro (int cantidadLibro){
+        this.cantidadLibro = cantidadLibro;
+    }
+    public void setIdCompra (Long idCompra){
+        this.idCompra = idCompra;
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -15,6 +16,7 @@ public class TransaccionService {
 
     @Autowired
     TransaccionRepository transaccionRepository;
+
 
     public List<Transaccion> getAll(){
         return transaccionRepository.findAll();
@@ -27,14 +29,38 @@ public class TransaccionService {
         return transaccionNuevo;
     }
 
-    public void RealizarTransaccion(CompraRequestDTO compraRequestDTO){
-        LocalDateTime fechaCompra = compraRequestDTO.getTimestamp();
+    public Long getIdCompra(List<Transaccion> transacciones){
+        Long id = 0L;
+        if(transacciones.isEmpty()){
+            return id;
+        }
+        else{
+            for(Transaccion transaccion : transacciones){
+                 Long idTransaccion = transaccion.getIdCompra();
+                 id = Math.max(id,idTransaccion);
+            }
+            return id+1;
+        }
+       }
+
+    public void realizarTransaccion(CompraRequestDTO compraRequestDTO){
+        List<Transaccion> totalTransacciones = transaccionRepository.findAll();
+        Long idCompra = getIdCompra(totalTransacciones);
+        System.out.println("el id de compra es: " + idCompra);
+        Date fechaCompra = compraRequestDTO.getTimestamp();
+        System.out.println("la fecha de compra es: " + fechaCompra);
         List<DetalleCompraDTO> detallesCompraDTOS = compraRequestDTO.getDetallesCompraDTOS();
         Long idCliente = compraRequestDTO.getIdCliente();
         for(DetalleCompraDTO detalleCompraDTO : detallesCompraDTOS){
             Long idLibro = detalleCompraDTO.getIdLibro();
             int cantidad = detalleCompraDTO.getCantidad();
-            // crear metodo para obtener todas las transacciones y generar un id de compra mayor al ultimo registrado
+            Transaccion nuevaTransaccion = new Transaccion();
+            nuevaTransaccion.setIdCompra(idCompra);
+            nuevaTransaccion.setFechaCompra(fechaCompra);
+            nuevaTransaccion.setCantidadLibro(cantidad);
+            nuevaTransaccion.setIdLibro(idLibro);
+            nuevaTransaccion.setIdCliente(idCliente);
+            transaccionRepository.save(nuevaTransaccion);
         }
 
     }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -45,8 +46,8 @@ public class TransaccionController {
 
     @PostMapping("/realizar")
     public ResponseEntity<String> realizarCompra(@RequestBody CompraRequestDTO compraRequestDTO) {
-        compraRequestDTO.setTimestamp(LocalDateTime.now());
-        transaccionService.RealizarTransaccion(compraRequestDTO);
+        compraRequestDTO.setTimestamp(new Date());
+        transaccionService.realizarTransaccion(compraRequestDTO);
         return ResponseEntity.ok("Compra realizada con éxito");
     }
 }
