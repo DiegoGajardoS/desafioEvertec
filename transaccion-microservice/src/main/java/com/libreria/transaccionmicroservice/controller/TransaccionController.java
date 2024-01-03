@@ -44,7 +44,7 @@ public class TransaccionController {
         return ResponseEntity.ok(transaccionNuevo);
     }
 
-    @PostMapping("/realizar")
+    @PostMapping("/nuevaTransaccion")
     public ResponseEntity<String> realizarCompra(@RequestBody CompraRequestDTO compraRequestDTO) {
         compraRequestDTO.setTimestamp(new Date());
         transaccionService.realizarTransaccion(compraRequestDTO);

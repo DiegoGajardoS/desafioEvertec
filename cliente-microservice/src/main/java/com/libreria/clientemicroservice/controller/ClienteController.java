@@ -2,6 +2,8 @@ package com.libreria.clientemicroservice.controller;
 
 
 import com.libreria.clientemicroservice.entity.Cliente;
+import com.libreria.clientemicroservice.feignClients.TransaccionFeignClient;
+import com.libreria.clientemicroservice.model.CompraRequestDTO;
 import com.libreria.clientemicroservice.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class ClienteController {
 
     @Autowired
     ClienteService clienteService;
+
+    TransaccionFeignClient transaccionFeignClient;
+
 
     @GetMapping
     public ResponseEntity<List<Cliente>> getAll(){
@@ -38,5 +43,17 @@ public class ClienteController {
         Cliente clienteNuevo = clienteService.save(cliente);
         return ResponseEntity.ok(clienteNuevo);
     }
+
+    @PostMapping("/realizarCompra/{idCliente}")
+    public ResponseEntity<String> realizarTransaccionDesdeCliente(@PathVariable Long idCliente, @RequestBody CompraRequestDTO compraRequestDTO) {
+
+        ResponseEntity<String> respuesta = clienteService.realizarTransaccionDesdeCliente(idCliente, compraRequestDTO);
+        if (respuesta.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.ok("Solicitud de transacción enviada con éxito desde el cliente");
+        } else {
+            return ResponseEntity.status(respuesta.getStatusCode()).body("Error al enviar la solicitud de transacción desde el cliente");
+        }
+    }
+
 
 }
