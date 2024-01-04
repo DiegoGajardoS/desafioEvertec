@@ -2,6 +2,7 @@ package com.libreria.transaccionmicroservice.controller;
 
 
 import com.libreria.transaccionmicroservice.dto.CompraRequestDTO;
+import com.libreria.transaccionmicroservice.entity.DetalleFInalTransaccion;
 import com.libreria.transaccionmicroservice.entity.Transaccion;
 import com.libreria.transaccionmicroservice.service.TransaccionService;
 import com.libreria.transaccionmicroservice.repository.TransaccionRepository;
@@ -35,6 +36,16 @@ public class TransaccionController {
         if(transaccion == null)
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(transaccion);
+    }
+
+    @GetMapping("/por-cliente/{idCliente}")
+    public List<Transaccion> obtenerPorIdCliente(@PathVariable Long idCliente) {
+        return transaccionService.obtenerPorIdCliente(idCliente);
+    }
+
+    @GetMapping("/por-compra/{idCompra}")
+    public List<Transaccion> obtenerPorIdCompra(@PathVariable Long idCompra) {
+        return transaccionService.obtenerPorIdCompra(idCompra);
     }
 
     @PostMapping

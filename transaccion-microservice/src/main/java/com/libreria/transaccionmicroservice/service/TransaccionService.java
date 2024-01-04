@@ -74,4 +74,11 @@ public class TransaccionService {
 
 
     }
+    public List<Transaccion> obtenerPorIdCliente(Long idCliente){
+        return transaccionRepository.findByIdCliente(idCliente);
+    }
+
+    public List<Transaccion> obtenerPorIdCompra(Long idCompra){
+        return transaccionRepository.findByIdCompra(idCompra);
+    }
 }

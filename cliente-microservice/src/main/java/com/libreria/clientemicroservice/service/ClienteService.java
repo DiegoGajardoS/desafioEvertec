@@ -4,9 +4,7 @@ package com.libreria.clientemicroservice.service;
 import com.libreria.clientemicroservice.entity.Cliente;
 import com.libreria.clientemicroservice.feignClients.LibroFeignClient;
 import com.libreria.clientemicroservice.feignClients.TransaccionFeignClient;
-import com.libreria.clientemicroservice.model.CompraRequestDTO;
-import com.libreria.clientemicroservice.model.DetalleCompraDTO;
-import com.libreria.clientemicroservice.model.Libro;
+import com.libreria.clientemicroservice.model.*;
 import com.libreria.clientemicroservice.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -82,6 +80,30 @@ public class ClienteService {
     }
     public void actualizarStockDelLibro(int idLibro, int nuevoStock) {
         libroFeignClient.actualizarStock(idLibro, nuevoStock);
+    }
+
+    public List<Transaccion> obtenerTodasLasTransacciones() {
+        return transaccionFeignClient.obtenerTodasLasTransacciones();
+    }
+
+    public List<Transaccion> obtenerTransaccionesPorIdCompra(Long idCompra) {
+        return transaccionFeignClient.obtenerPorIdCompra(idCompra);
+    }
+
+    public List<Transaccion> obtenerTransaccionesPorIdCliente(Long idCliente) {
+        return transaccionFeignClient.obtenerPorIdCliente(idCliente);
+    }
+
+    public List<DetalleFinalTransaccion> obtenerTodosLosDetallesTransacciones() {
+        return transaccionFeignClient.obtenerTodosLosDetallesFinales();
+    }
+
+    public List<DetalleFinalTransaccion> obtenerDetallesTransaccionesPorIdCompra(Long idCompra) {
+        return transaccionFeignClient.obtenerDetallePorIdCompra(idCompra);
+    }
+
+    public List<DetalleFinalTransaccion> obtenerDetallesTransaccionesPorIdCliente(Long idCliente) {
+        return transaccionFeignClient.obtenerDetallePorIdCliente(idCliente);
     }
 }
 
