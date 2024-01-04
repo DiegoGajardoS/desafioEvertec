@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/libro")
@@ -25,7 +26,7 @@ public class LibroController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Libro> getById(@PathVariable("id") int id) {
+    public ResponseEntity<Libro> getLibroById(@PathVariable("id") int id) {
 
         Libro libro = libroService.getLibroById(id);
         if(libro == null)
@@ -40,4 +41,9 @@ public class LibroController {
         return ResponseEntity.ok(libroNuevo);
     }
 
+    @PutMapping("/actualizarStock/{id}")
+    public ResponseEntity<Optional<Libro>> actualizarStock(@PathVariable("id") int id, @RequestBody int nuevoStock) {
+        Optional<Libro> libroActualizado = libroService.actualizarStock(id, nuevoStock);
+        return ResponseEntity.ok(libroActualizado);
+    }
 }

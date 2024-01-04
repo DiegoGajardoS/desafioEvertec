@@ -1,9 +1,6 @@
 package com.libreria.libromicroservice.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,14 +11,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Libro {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String titulo;
+    private int stock;
     private String autor;
     private String genero;
-    private String precio;
+    @Column(columnDefinition = "INT")
+    private int precio;
     private String editorial;
-    private int stock;
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 }

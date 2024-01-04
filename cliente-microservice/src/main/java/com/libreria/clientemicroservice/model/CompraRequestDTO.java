@@ -13,7 +13,7 @@ public class CompraRequestDTO {
     private Long idCliente;
     private List<DetalleCompraDTO> detallesCompraDTOS;
     private Date timestamp;
-
+    private int precioCompra;
 
 
     public List<DetalleCompraDTO> getDetallesCompraDTOS() {
@@ -36,4 +36,5 @@ public class CompraRequestDTO {
     public void setIdCliente(Long idCliente){
         this.idCliente = idCliente;
     }
+    public void setPrecioCompra(int precioCompra){ this.precioCompra = precioCompra;}
 }

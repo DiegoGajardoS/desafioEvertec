@@ -2,8 +2,11 @@ package com.libreria.clientemicroservice.service;
 
 
 import com.libreria.clientemicroservice.entity.Cliente;
+import com.libreria.clientemicroservice.feignClients.LibroFeignClient;
 import com.libreria.clientemicroservice.feignClients.TransaccionFeignClient;
 import com.libreria.clientemicroservice.model.CompraRequestDTO;
+import com.libreria.clientemicroservice.model.DetalleCompraDTO;
+import com.libreria.clientemicroservice.model.Libro;
 import com.libreria.clientemicroservice.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,9 @@ public class ClienteService {
     @Autowired
     TransaccionFeignClient transaccionFeignClient;
 
+    @Autowired
+    LibroFeignClient libroFeignClient;
+
     public List<Cliente> getAll() {
         return clienteRepository.findAll();
     }
@@ -32,9 +38,50 @@ public class ClienteService {
         return clienteNuevo;
     }
     public ResponseEntity<String> realizarTransaccionDesdeCliente(Long idCliente, CompraRequestDTO compraRequestDTO) {
-        compraRequestDTO.setIdCliente(idCliente);
-        return transaccionFeignClient.realizarCompra(compraRequestDTO);
+        //hacer un llamado a libro para traer los datos del libro y ver si puedo comprar segun stock
+        List<DetalleCompraDTO> detallesCompraDTOS = compraRequestDTO.getDetallesCompraDTOS();
+        int validador = 0;
+        int cantidadCompras = detallesCompraDTOS.size();
+        for(DetalleCompraDTO detalleCompraDTO : detallesCompraDTOS){
+            //consulta stock
+            Long idLibro = detalleCompraDTO.getIdLibro();
+            int idLibroInt = idLibro.intValue();
+            Libro libroActual = obtenerLibro(idLibroInt);
+            int cantidadComprar = detalleCompraDTO.getCantidad();
+            int stockLibroActual = libroActual.getStock();
+            if( cantidadComprar > stockLibroActual){
+                return ResponseEntity.notFound().build();
+            }else{
+                validador += 1;
+            }
+          }
+        if(validador == cantidadCompras){
+            int precioLibros = 0;
+            for(DetalleCompraDTO detalleCompraDTO : detallesCompraDTOS){
+                //guardar precio
+                int precioLibro = 0;
+                Long idLibro = detalleCompraDTO.getIdLibro();
+                int idLibroInt = idLibro.intValue();
+                Libro libroActual = obtenerLibro(idLibroInt);
+                int cantidadComprar = detalleCompraDTO.getCantidad();
+                int stockLibroActual = libroActual.getStock();
+                precioLibro = libroActual.getPrecio() * cantidadComprar;
+                precioLibros = precioLibros + precioLibro;
+                int nuevoStock = stockLibroActual - cantidadComprar;
+                actualizarStockDelLibro(idLibroInt,nuevoStock);
+            }
+            compraRequestDTO.setPrecioCompra(precioLibros);
+            compraRequestDTO.setIdCliente(idCliente);
+            return transaccionFeignClient.realizarCompra(compraRequestDTO);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
-
+    public Libro obtenerLibro(int id){
+        return libroFeignClient.getLibroById(id);
+    }
+    public void actualizarStockDelLibro(int idLibro, int nuevoStock) {
+        libroFeignClient.actualizarStock(idLibro, nuevoStock);
+    }
 }
 

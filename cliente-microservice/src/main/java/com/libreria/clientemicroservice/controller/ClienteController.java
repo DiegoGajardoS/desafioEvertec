@@ -4,6 +4,7 @@ package com.libreria.clientemicroservice.controller;
 import com.libreria.clientemicroservice.entity.Cliente;
 import com.libreria.clientemicroservice.feignClients.TransaccionFeignClient;
 import com.libreria.clientemicroservice.model.CompraRequestDTO;
+import com.libreria.clientemicroservice.model.Libro;
 import com.libreria.clientemicroservice.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,5 +56,14 @@ public class ClienteController {
         }
     }
 
+    @GetMapping("buscarLibro/{idLibro}")
+    public ResponseEntity<Libro> obtenerLibro(@PathVariable int idLibro){
+        Libro libro = clienteService.obtenerLibro(idLibro);
+        return ResponseEntity.ok(libro);
+    }
 
+    @PutMapping("/actualizarStockDelLibro/{idLibro}")
+    public void actualizarStockDelLibro(@PathVariable int idLibro,@RequestBody int nuevoStock) {
+        clienteService.actualizarStockDelLibro(idLibro, nuevoStock);
+    }
 }
