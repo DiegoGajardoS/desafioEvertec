@@ -2,12 +2,12 @@ package com.libreria.transaccionmicroservice.service;
 
 import com.libreria.transaccionmicroservice.dto.CompraRequestDTO;
 import com.libreria.transaccionmicroservice.dto.DetalleCompraDTO;
+import com.libreria.transaccionmicroservice.entity.DetalleFInalTransaccion;
 import com.libreria.transaccionmicroservice.entity.Transaccion;
+import com.libreria.transaccionmicroservice.repository.DetalleFinalTransaccionRepository;
 import com.libreria.transaccionmicroservice.repository.TransaccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +16,8 @@ public class TransaccionService {
 
     @Autowired
     TransaccionRepository transaccionRepository;
-
+    @Autowired
+    DetalleFinalTransaccionRepository detalleFinalTransaccionRepository;
 
     public List<Transaccion> getAll(){
         return transaccionRepository.findAll();
@@ -51,6 +52,7 @@ public class TransaccionService {
         System.out.println("la fecha de compra es: " + fechaCompra);
         List<DetalleCompraDTO> detallesCompraDTOS = compraRequestDTO.getDetallesCompraDTOS();
         Long idCliente = compraRequestDTO.getIdCliente();
+        int precioCompra = compraRequestDTO.getPrecioCompra();
         for(DetalleCompraDTO detalleCompraDTO : detallesCompraDTOS){
             Long idLibro = detalleCompraDTO.getIdLibro();
             int cantidad = detalleCompraDTO.getCantidad();
@@ -62,6 +64,14 @@ public class TransaccionService {
             nuevaTransaccion.setIdCliente(idCliente);
             transaccionRepository.save(nuevaTransaccion);
         }
+        DetalleFInalTransaccion detalleFInalTransaccionNew = new DetalleFInalTransaccion();
+        detalleFInalTransaccionNew.setFechaCompra(fechaCompra);
+        detalleFInalTransaccionNew.setIdCliente(idCliente);
+        detalleFInalTransaccionNew.setPrecioCompra(precioCompra);
+        detalleFInalTransaccionNew.setIdCompra(idCompra);
+        detalleFinalTransaccionRepository.save(detalleFInalTransaccionNew);
+
+
 
     }
 }
