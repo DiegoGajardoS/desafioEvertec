@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/cliente")
@@ -101,5 +103,12 @@ public class ClienteController {
     public ResponseEntity<List<DetalleFinalTransaccion>> obtenerDetallesTransaccionesPorIdCliente(@PathVariable Long idCliente) {
         List<DetalleFinalTransaccion> detallesTransaccionesPorIdCliente = clienteService.obtenerDetallesTransaccionesPorIdCliente(idCliente);
         return ResponseEntity.ok(detallesTransaccionesPorIdCliente);
+    }
+
+    @GetMapping("/getAll/{idCliente}")
+    public ResponseEntity<Map<String, Object>> getAllInfo(@PathVariable int idCliente){
+        Map<String,Object> result = clienteService.getUserAndAllTransaccions(idCliente);
+        return ResponseEntity.ok(result);
+
     }
 }

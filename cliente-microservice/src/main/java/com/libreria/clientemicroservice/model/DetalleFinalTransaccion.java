@@ -19,4 +19,8 @@ public class DetalleFinalTransaccion {
     private Long idCliente;
     private int precioCompra;
     private Long idCompra;
+
+    public Long getIdCompra() {
+        return idCompra;
+    }
 }

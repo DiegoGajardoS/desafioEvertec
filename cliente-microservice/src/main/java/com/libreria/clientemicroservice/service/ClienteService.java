@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.management.ObjectName;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ClienteService {
@@ -104,6 +108,58 @@ public class ClienteService {
 
     public List<DetalleFinalTransaccion> obtenerDetallesTransaccionesPorIdCliente(Long idCliente) {
         return transaccionFeignClient.obtenerDetallePorIdCliente(idCliente);
+    }
+    public Map<String, Object> getUserAndAllTransaccions(int idCliente){
+        Map<String,Object> result = new HashMap<>();
+        Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
+        if(cliente == null){
+            result.put("Mensaje", "no existe el cliente");
+            return result;
+        }
+        result.put("Cliente", cliente);
+        Long longIdCliente = Long.valueOf(idCliente);
+        List<Transaccion> transaccions = transaccionFeignClient.obtenerPorIdCliente(longIdCliente);
+        List<DetalleFinalTransaccion> detalleFinalTransaccions = transaccionFeignClient.obtenerDetallePorIdCliente(longIdCliente);
+        if(transaccions.isEmpty()){
+            result.put("Transacciones","El cliente no ha realizado compras");
+            result.put("Detalles compras","No ha realizado compras, por lo tanto no hay detalles de compra");
+        }
+        else {
+            List<Map<String, Object>> compras = new ArrayList<>();
+
+            for (DetalleFinalTransaccion detalleFinalTransaccion : detalleFinalTransaccions) {
+                Map<String, Object> compraInfo = new HashMap<>();
+                int librosComprados = 0;
+                Long idCompra = detalleFinalTransaccion.getIdCompra();
+                List<Transaccion> transaccionesCompras = transaccionFeignClient.obtenerPorIdCompra(idCompra);
+                List<Map<String, Object>> librosCompradosEnCompra = new ArrayList<>();
+
+                for (Transaccion transaccionCompra : transaccionesCompras) {
+                    int librosCompradosEnTransaccion = transaccionCompra.getCantidadLibro();
+                    librosComprados += librosCompradosEnTransaccion;
+
+                    Map<String, Object> libroInfo = new HashMap<>();
+                    Long idLibro = transaccionCompra.getIdlibro();
+                    int intIdLibro = idLibro.intValue();
+                    Libro libroEnCompra = obtenerLibro(intIdLibro);
+
+                    libroInfo.put("Libro", libroEnCompra);
+                    librosCompradosEnCompra.add(libroInfo); // Agregar detalles de libro a la lista
+                }
+
+                compraInfo.put("id Compra", idCompra);
+                compraInfo.put("Precio final de compra", detalleFinalTransaccion.getPrecioCompra());
+                compraInfo.put("Cantidad de libros comprados", librosComprados);
+                compraInfo.put("Fecha de compra", detalleFinalTransaccion.getFechaCompra());
+                compraInfo.put("Libros comprados", librosCompradosEnCompra); // Asignar lista de libros al mapa
+
+                compras.add(compraInfo);
+            }
+
+            result.put("Compras", compras);
+            result.put("Transacciones", transaccions);
+        }
+        return result;
     }
 }
 

@@ -19,4 +19,11 @@ public class Transaccion {
     private Long idLibro;
     private int cantidadLibro;
     private Long idCompra;
+
+    public int getCantidadLibro() {
+        return cantidadLibro;
+    }
+    public Long getIdlibro(){
+        return idLibro;
+    }
 }
