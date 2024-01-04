@@ -9,12 +9,14 @@ import com.libreria.clientemicroservice.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Service
 public class ClienteService {
@@ -36,12 +38,29 @@ public class ClienteService {
     }
 
     public Cliente save(Cliente cliente) {
-        Cliente clienteNuevo = clienteRepository.save(cliente);
-        return clienteNuevo;
+        if (StringUtils.hasText(cliente.getNombre()) && StringUtils.hasText(cliente.getCorreo())) {
+            if (isValidEmail(cliente.getCorreo())) {
+                Cliente clienteNuevo = clienteRepository.save(cliente);
+                return clienteNuevo;
+            } else {
+                throw new IllegalArgumentException("El formato del correo electrónico no es válido.");
+            }
+        } else {
+            throw new IllegalArgumentException("Nombre y correo son campos requeridos para un cliente.");
+        }
+    }
+
+    // Método para validar el formato del correo electrónico con una expresión regular
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        return pattern.matcher(email).matches();
     }
     public ResponseEntity<String> realizarTransaccionDesdeCliente(Long idCliente, CompraRequestDTO compraRequestDTO) {
-        //hacer un llamado a libro para traer los datos del libro y ver si puedo comprar segun stock
         List<DetalleCompraDTO> detallesCompraDTOS = compraRequestDTO.getDetallesCompraDTOS();
+        if (detallesCompraDTOS == null){
+            return ResponseEntity.notFound().build();
+        }
         int validador = 0;
         int cantidadCompras = detallesCompraDTOS.size();
         for(DetalleCompraDTO detalleCompraDTO : detallesCompraDTOS){
@@ -95,7 +114,11 @@ public class ClienteService {
     }
 
     public List<Transaccion> obtenerTransaccionesPorIdCliente(Long idCliente) {
-        return transaccionFeignClient.obtenerPorIdCliente(idCliente);
+        List<Transaccion> transaccions = transaccionFeignClient.obtenerPorIdCliente(idCliente);
+        if(transaccions.isEmpty()){
+            System.out.println("No hay transacciones para este cliente");
+        }
+        return transaccions;
     }
 
     public List<DetalleFinalTransaccion> obtenerTodosLosDetallesTransacciones() {

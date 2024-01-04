@@ -10,6 +10,7 @@ import com.libreria.clientemicroservice.model.Transaccion;
 import com.libreria.clientemicroservice.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,10 +52,9 @@ public class ClienteController {
 
     @PostMapping("/realizarCompra/{idCliente}")
     public ResponseEntity<String> realizarTransaccionDesdeCliente(@PathVariable Long idCliente, @RequestBody CompraRequestDTO compraRequestDTO) {
-
         ResponseEntity<String> respuesta = clienteService.realizarTransaccionDesdeCliente(idCliente, compraRequestDTO);
         if (respuesta.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.ok("Solicitud de transacción enviada con éxito desde el cliente");
+            return ResponseEntity.ok("Transaccion realizada con exito");
         } else {
             return ResponseEntity.status(respuesta.getStatusCode()).body("Error al enviar la solicitud de transacción desde el cliente");
         }
