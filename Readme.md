@@ -8,8 +8,10 @@ Diego Gajardo Salgado
 
 ## Entorno de desarrollo
 
--Java 17
--PostgresSQL16
+- Java 17
+- SpringBoot
+- PostgreSQL 16
+- Maven project
 
 ## Consideraciones
 
