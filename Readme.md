@@ -21,11 +21,11 @@ Diego Gajardo Salgado
 
 ## Servicios solicitados
 
--Crear modelo en cualquier motor de BD.
--Crear servicio REST POST para el ingreso de un cliente.
--Crear servicio REST POST para el ingreso de una transacción de compra.
--Crear servicio REST GET para obtener los datos de transacciones registradas.
--Crear servicio REST GET para obtener los datos de clientes registrados.
+- Crear modelo en cualquier motor de BD.
+- Crear servicio REST POST para el ingreso de un cliente.
+- Crear servicio REST POST para el ingreso de una transacción de compra.
+- Crear servicio REST GET para obtener los datos de transacciones registradas.
+- Crear servicio REST GET para obtener los datos de clientes registrados.
 
 
 ## Peticiones para consumir servicios en postman
